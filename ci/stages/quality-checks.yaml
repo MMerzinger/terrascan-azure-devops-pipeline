@@ -22,4 +22,5 @@ stages:
     parameters:
       charts: ${{ parameters.charts }}
       skipRules: ${{ parameters.skipRules }}
+      failWithVuln: ${{ parameters.failWithVuln }}
     
