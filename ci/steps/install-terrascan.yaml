@@ -1,0 +1,31 @@
+parameters:
+- name: TERRASCAN_VERSION
+  type: string
+  default: "1.9.0"
+- name: TERRASCAN_CACHE_DIR
+  type: string
+  default: $(Pipeline.Workspace)/.terrascanCache
+
+steps:
+  - task: Cache@2
+    displayName: "Detect Terrascan debian package cache hit"
+    inputs:
+      key: 'deb | "terrascan-${{ parameters.TERRASCAN_VERSION }}"'
+      path: ${{ parameters.TERRASCAN_CACHE_DIR }}
+      cacheHitVar: TERRASCAN_CACHE_HIT
+  - bash: |
+      tar -xf ${{ parameters.TERRASCAN_CACHE_DIR }}/terrascan-${{ parameters.TERRASCAN_VERSION }}.tar.gz terrascan
+      install terrascan /usr/local/bin && rm terrascan
+    displayName: "Restore terrascan CLI"
+    condition: and(not(canceled()), eq(variables.TERRASCAN_CACHE_HIT, 'true'))
+  - bash: |
+      mkdir -p ${{ parameters.TERRASCAN_CACHE_DIR }}
+      wget -O ${{ parameters.TERRASCAN_CACHE_DIR }}/terrascan-${{ parameters.TERRASCAN_VERSION }}.tar.gz https://github.com/accurics/terrascan/releases/download/v${{ parameters.TERRASCAN_VERSION }}/terrascan_${{ parameters.TERRASCAN_VERSION }}_Linux_x86_64.tar.gz 
+      tar -xf ${{ parameters.TERRASCAN_CACHE_DIR }}/terrascan-${{ parameters.TERRASCAN_VERSION }}.tar.gz terrascan
+      install terrascan /usr/local/bin && rm terrascan
+    displayName: "Install Terrascan from Github"
+    condition: and(not(canceled()), or(failed(), ne(variables.TERRASCAN_CACHE_HIT, 'true')))
+  - bash: |
+      terrascan version
+      terrascan init
+    displayName: "Initialize Terrascan"

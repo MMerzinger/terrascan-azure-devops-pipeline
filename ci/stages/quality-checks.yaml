@@ -1,0 +1,25 @@
+parameters:
+- name: variableSets
+  type: object
+  default: {}
+- name: charts
+  type: object
+  default: {}
+- name: failWithVuln
+  type: boolean
+  displayName: Fail if a vulnerability was found
+  default: false
+- name: skipRules
+  displayName: List of rules to skip (string that is comma separated)
+  default: ""
+  type: string
+
+stages:
+- stage: quality_checks
+  variables: ${{ parameters.variableSets }}
+  jobs:
+  - template: ../jobs/iac-scan.yaml
+    parameters:
+      charts: ${{ parameters.charts }}
+      skipRules: ${{ parameters.skipRules }}
+    

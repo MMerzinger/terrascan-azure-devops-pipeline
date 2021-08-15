@@ -1,0 +1,29 @@
+parameters:
+- name: variableSets
+  type: object
+  default: {}
+- name: charts
+  type: object
+  default: {}
+- name: failWithVuln
+  type: boolean
+  displayName: Fail if a vulnerability was found
+  default: false
+- name: skipRules
+  displayName: List of rules to skip (string that is comma separated)
+  default: ""
+  type: string
+
+jobs:
+- job: iac_scan
+  variables: ${{ parameters.variableSets }}
+  steps:
+  - template: ../steps/install-terrascan.yaml
+  - ${{ each chart in parameters.charts }}:
+    - template: ../steps/scan-chart.yaml
+      parameters:
+        chartName: ${{ chart.key }}
+        chartPath: ${{ chart.value }}
+        failWithVuln: ${{ parameters.failWithVuln }}
+        skipRules: ${{ parameters.skipRules }}
+

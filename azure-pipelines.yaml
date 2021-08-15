@@ -1,0 +1,14 @@
+name: $(Date:yyyyMMdd)$(Rev:.r)
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - template: ci/stages/quality-checks.yaml
+    parameters:
+      charts:
+        demo: $(System.DefaultWorkingDirectory)/charts/demo
+

@@ -1,0 +1,27 @@
+parameters:
+- name: chartName
+  displayName: Name of the chart
+  type: string
+- name: chartPath
+  displayName: Full path of the chart
+  type: string
+- name: failWithVuln
+  type: boolean
+  displayName: Fail if a vulnerability was found
+  default: false
+- name: skipRules
+  displayName: List of rules to skip (string that is comma separated)
+  default: "accurics.kubernetes.OPS.460"
+  type: string
+
+steps:
+- bash: |
+    terrascan scan -i helm --skip-rules \"${{ parameters.skipRules }}\" --show-passed -o junit-xml -d ${{ parameters.chartPath }} > terrascan-all-${{ parameters.chartName }}.xml
+    cat terrascan-all-${{ parameters.chartName }}.xml
+  displayName: "Scanning all severities on ${{ parameters.chartName }}"
+- task: PublishTestResults@2
+  displayName: "Publish terrascan outputs of chart ${{ parameters.chartName }}"
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: "terrascan-all-${{ parameters.chartName }}.xml"
+    failTaskOnFailedTests: ${{ parameters.failWithVuln }}
