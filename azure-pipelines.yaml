@@ -11,4 +11,4 @@ stages:
     parameters:
       charts:
         demo: $(System.DefaultWorkingDirectory)/charts/demo
-
+      failWithVuln: true
