@@ -7,7 +7,7 @@ pool:
   vmImage: ubuntu-latest
 
 stages:
-  - template: ci/stages/quality-checks.yaml
+  - template: ci/stages/quality_checks.yaml
     parameters:
       charts:
         demo: $(System.DefaultWorkingDirectory)/charts/demo

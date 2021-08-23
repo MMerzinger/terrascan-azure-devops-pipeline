@@ -18,7 +18,7 @@ stages:
 - stage: quality_checks
   variables: ${{ parameters.variableSets }}
   jobs:
-  - template: ../jobs/iac-scan.yaml
+  - template: ../jobs/iac_scan.yaml
     parameters:
       charts: ${{ parameters.charts }}
       skipRules: ${{ parameters.skipRules }}

@@ -18,9 +18,9 @@ jobs:
 - job: iac_scan
   variables: ${{ parameters.variableSets }}
   steps:
-  - template: ../steps/install-terrascan.yaml
+  - template: ../steps/install_terrascan.yaml
   - ${{ each chart in parameters.charts }}:
-    - template: ../steps/scan-chart.yaml
+    - template: ../steps/scan_chart.yaml
       parameters:
         chartName: ${{ chart.key }}
         chartPath: ${{ chart.value }}
